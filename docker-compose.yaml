@@ -1,4 +1,3 @@
-# docker compose up -d --build --force-recreate
 version: '3.8'
 name: ingressify
 
@@ -23,6 +22,7 @@ services:
     build:
       context: ../mcs.account-resource/
       dockerfile: Dockerfile
+    container_name: ingressify-account
     image: ingressify-account:latest
     environment:
       - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
@@ -36,7 +36,6 @@ services:
       - private-network
     depends_on:
       - db-ingressify
-
 
 networks:
   private-network:
