@@ -1,0 +1,43 @@
+# docker compose up -d --build --force-recreate
+version: '3.8'
+name: ingressify
+
+services:
+
+  db-ingressify:
+    container_name: ingressify-db-ingressify
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=ingressify
+      - POSTGRES_PASSWORD=ingressify
+      - POSTGRES_DB=ingressify
+    volumes:
+      - $VOLUME/postgres/ingressify/data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - private-network
+
+  account:
+    build:
+      context: ../mcs.account-resource/
+      dockerfile: Dockerfile
+    image: ingressify-account:latest
+    environment:
+      - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
+      - spring.datasource.username=ingressify
+      - spring.datasource.password=ingressify
+    deploy:
+      mode: replicated
+      replicas: 1
+    restart: always
+    networks:
+      - private-network
+    depends_on:
+      - db-ingressify
+
+
+networks:
+  private-network:
+    driver: bridge
