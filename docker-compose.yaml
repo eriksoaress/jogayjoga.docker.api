@@ -18,20 +18,20 @@ services:
     networks:
       - private-network
 
-  # discovery:
-  #   build:
-  #     context: ../ingressify.discovery/
-  #     dockerfile: Dockerfile
-  #   image: ingressify-discovery:latest
-  #   ports:
-  #     - 8761:8761
-  #   environment:
-  #     - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
-  #     - spring.datasource.username=ingressify
-  #     - spring.datasource.password=ingressify
-  #   restart: always
-  #   networks:
-  #     - private-network
+  discovery:
+    build:
+      context: ../ingressify.discovery/
+      dockerfile: Dockerfile
+    image: ingressify-discovery:latest
+    ports:
+      - 8761:8761
+    environment:
+      - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
+      - spring.datasource.username=ingressify
+      - spring.datasource.password=ingressify
+    restart: always
+    networks:
+      - private-network
 
   account:
     build:
@@ -43,6 +43,8 @@ services:
       - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
       - spring.datasource.username=ingressify
       - spring.datasource.password=ingressify
+      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
+
     deploy:
       mode: replicated
       replicas: 1
@@ -51,7 +53,7 @@ services:
       - private-network
     depends_on:
       - db-ingressify
-  #     - discovery
+      - discovery
 
 networks:
   private-network:
