@@ -43,7 +43,7 @@ services:
       - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
       - spring.datasource.username=ingressify
       - spring.datasource.password=ingressify
-      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka
 
     deploy:
       mode: replicated
@@ -54,6 +54,26 @@ services:
     depends_on:
       - db-ingressify
       - discovery
+
+    auth:
+    build:
+      context: ../ingressify.auth-resource/
+      dockerfile: Dockerfile
+    container_name: ingressify-auth
+    image: ingressify-auth:latest
+    ports:
+      - 8081:8080
+    environment:
+      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
+    deploy:
+      mode: replicated
+      replicas: 1
+    restart: always
+    networks:
+      - private-network
+    depends_on:
+      - discovery
+      - account
 
 networks:
   private-network:
