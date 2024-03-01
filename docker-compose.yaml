@@ -55,7 +55,7 @@ services:
       - db-ingressify
       - discovery
 
-    auth:
+  auth:
     build:
       context: ../ingressify.auth-resource/
       dockerfile: Dockerfile
