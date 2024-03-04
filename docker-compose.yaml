@@ -22,19 +22,20 @@ services:
     build:
       context: ../ingressify.discovery/
       dockerfile: Dockerfile
+    container_name: ingressif-discovery
     image: ingressify-discovery:latest
     ports:
       - 8761:8761
-    environment:
-      - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
-      - spring.datasource.username=ingressify
-      - spring.datasource.password=ingressify
+    # environment:
+    #   - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
+    #   - spring.datasource.username=ingressify
+    #   - spring.datasource.password=ingressify
     restart: always
     networks:
       - private-network
 
   account:
-    build:
+    build: 
       context: ../ingressify.account-resource/
       dockerfile: Dockerfile
     container_name: ingressify-account
@@ -68,7 +69,6 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-    restart: always
     networks:
       - private-network
     depends_on:
