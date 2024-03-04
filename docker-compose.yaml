@@ -25,10 +25,6 @@ services:
     image: ingressify-discovery:latest
     ports:
       - 8761:8761
-    environment:
-      - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
-      - spring.datasource.username=ingressify
-      - spring.datasource.password=ingressify
     restart: always
     networks:
       - private-network
@@ -62,7 +58,7 @@ services:
     container_name: ingressify-auth
     image: ingressify-auth:latest
     ports:
-      - 8081:8080
+      - 8080:8080
     environment:
       - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
     deploy:
