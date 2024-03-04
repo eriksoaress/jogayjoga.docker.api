@@ -22,6 +22,7 @@ services:
     build:
       context: ../ingressify.discovery/
       dockerfile: Dockerfile
+    container_name: ingressify-discovery
     image: ingressify-discovery:latest
     ports:
       - 8761:8761
