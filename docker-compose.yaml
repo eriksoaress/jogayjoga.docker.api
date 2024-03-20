@@ -17,6 +17,31 @@ services:
     restart: always
     networks:
       - private-network
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ingressify-prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - $VOLUME/prometheus:/etc/prometheus
+      - $VOLUME/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - private-network
+
+  grafana:
+    container_name: ingressify-grafana
+    image: grafana/grafana-enterprise
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - $VOLUME/grafana:/var/lib/grafana
+      - $VOLUME/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources      
+    restart: always
+    networks:
+      - private-network
 
   discovery:
     build:
@@ -29,6 +54,21 @@ services:
     restart: always
     networks:
       - private-network
+
+  gateway:
+    build:
+      context: ../ingressify.gateway/
+      dockerfile: Dockerfile
+    container_name: ingressify-gateway
+    image: ingressify-gateway:latest
+    ports:
+      - 8080:8080
+    environment:
+      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
+    networks:
+      - private-network
+    depends_on:
+      - discovery
 
   account:
     build: 
