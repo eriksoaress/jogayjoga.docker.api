@@ -98,8 +98,6 @@ services:
       dockerfile: Dockerfile
     container_name: ingressify-auth
     image: ingressify-auth:latest
-    ports:
-      - 8080:8080
     environment:
       - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
     deploy:
