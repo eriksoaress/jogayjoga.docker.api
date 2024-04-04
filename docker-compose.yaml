@@ -1,26 +1,26 @@
 version: '3.8'
-name: ingressify
+name: jogayjoga
 
 services:
 
-  db-ingressify:
-    container_name: ingressify-db-ingressify
+  db-jogayjoga:
+    container_name: jogayjoga-db-jogayjoga
     image: postgres:latest
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=ingressify
-      - POSTGRES_PASSWORD=ingressify
-      - POSTGRES_DB=ingressify
+      - POSTGRES_USER=jogayjoga
+      - POSTGRES_PASSWORD=jogayjoga
+      - POSTGRES_DB=jogayjoga
     volumes:
-      - $VOLUME/postgres/ingressify/data:/var/lib/postgresql/data
+      - $VOLUME/postgres/jogayjoga/data:/var/lib/postgresql/data
     restart: always
     networks:
       - private-network
   
   prometheus:
     image: prom/prometheus:latest
-    container_name: ingressify-prometheus
+    container_name: jogayjoga-prometheus
     ports:
       - 9090:9090
     volumes:
@@ -30,7 +30,7 @@ services:
       - private-network
 
   grafana:
-    container_name: ingressify-grafana
+    container_name: jogayjoga-grafana
     image: grafana/grafana-enterprise
     ports:
       - 3000:3000
@@ -45,10 +45,10 @@ services:
 
   discovery:
     build:
-      context: ../ingressify.discovery/
+      context: ../jogayjoga.discovery/
       dockerfile: Dockerfile
-    container_name: ingressify-discovery
-    image: ingressify-discovery:latest
+    container_name: jogayjoga-discovery
+    image: jogayjoga-discovery:latest
     ports:
       - 8761:8761
     restart: always
@@ -57,14 +57,14 @@ services:
 
   gateway:
     build:
-      context: ../ingressify.gateway/
+      context: ../jogayjoga.gateway/
       dockerfile: Dockerfile
-    container_name: ingressify-gateway
-    image: ingressify-gateway:latest
+    container_name: jogayjoga-gateway
+    image: jogayjoga-gateway:latest
     ports:
       - 8080:8080
     environment:
-      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka/
     networks:
       - private-network
     depends_on:
@@ -72,15 +72,15 @@ services:
 
   account:
     build: 
-      context: ../ingressify.account-resource/
+      context: ../jogayjoga.account-resource/
       dockerfile: Dockerfile
-    container_name: ingressify-account
-    image: ingressify-account:latest
+    container_name: jogayjoga-account
+    image: jogayjoga-account:latest
     environment:
-      - spring.datasource.url=jdbc:postgresql://ingressify-db-ingressify:5432/ingressify
-      - spring.datasource.username=ingressify
-      - spring.datasource.password=ingressify
-      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka
+      - spring.datasource.url=jdbc:postgresql://jogayjoga-db-jogayjoga:5432/jogayjoga
+      - spring.datasource.username=jogayjoga
+      - spring.datasource.password=jogayjoga
+      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka
 
     deploy:
       mode: replicated
@@ -89,17 +89,17 @@ services:
     networks:
       - private-network
     depends_on:
-      - db-ingressify
+      - db-jogayjoga
       - discovery
 
   auth:
     build:
-      context: ../ingressify.auth-resource/
+      context: ../jogayjoga.auth-resource/
       dockerfile: Dockerfile
-    container_name: ingressify-auth
-    image: ingressify-auth:latest
+    container_name: jogayjoga-auth
+    image: jogayjoga-auth:latest
     environment:
-      - eureka.client.service-url.defaultZone=http://ingressify-discovery:8761/eureka/
+      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka/
     deploy:
       mode: replicated
       replicas: 1
