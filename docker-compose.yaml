@@ -115,6 +115,30 @@ services:
       - discovery
       - account
       - auth
+  
+  group:
+    build: 
+      context: ../jogayjoga.group-resource/
+      dockerfile: Dockerfile
+    container_name: jogayjoga-group
+    image: jogayjoga-group:latest
+    environment:
+      - spring.datasource.url=jdbc:postgresql://jogayjoga-db-jogayjoga:5432/jogayjoga
+      - spring.datasource.username=jogayjoga
+      - spring.datasource.password=jogayjoga
+      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka
+
+    deploy:
+      mode: replicated
+      replicas: 1
+    restart: always
+    networks:
+      - private-network
+    depends_on:
+      - db-jogayjoga
+      - discovery
+      - account
+      - auth
 
   auth:
     build:
