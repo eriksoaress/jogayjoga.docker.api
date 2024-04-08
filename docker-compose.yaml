@@ -92,6 +92,50 @@ services:
       - db-jogayjoga
       - discovery
   
+
+  auth:
+    build:
+      context: ../jogayjoga.auth-resource/
+      dockerfile: Dockerfile
+    container_name: jogayjoga-auth
+    image: jogayjoga-auth:latest
+    environment:
+      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka/
+    deploy:
+      mode: replicated
+      replicas: 1
+    networks:
+      - private-network
+    depends_on:
+      - discovery
+      - account
+    
+  
+  sport:
+    build: 
+      context: ../jogayjoga.sport-resource/
+      dockerfile: Dockerfile
+    container_name: jogayjoga-sport
+    image: jogayjoga-sport:latest
+    environment:
+      - spring.datasource.url=jdbc:postgresql://jogayjoga-db-jogayjoga:5432/jogayjoga
+      - spring.datasource.username=jogayjoga
+      - spring.datasource.password=jogayjoga
+      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka
+
+    deploy:
+      mode: replicated
+      replicas: 1
+    restart: always
+    networks:
+      - private-network
+    depends_on:
+      - db-jogayjoga
+      - discovery
+      - auth
+      - account
+
+
   court:
     build: 
       context: ../jogayjoga.court-resource/
@@ -113,9 +157,10 @@ services:
     depends_on:
       - db-jogayjoga
       - discovery
-      - account
       - auth
-  
+      - account
+
+
   group:
     build: 
       context: ../jogayjoga.group-resource/
@@ -137,25 +182,10 @@ services:
     depends_on:
       - db-jogayjoga
       - discovery
-      - account
       - auth
-
-  auth:
-    build:
-      context: ../jogayjoga.auth-resource/
-      dockerfile: Dockerfile
-    container_name: jogayjoga-auth
-    image: jogayjoga-auth:latest
-    environment:
-      - eureka.client.service-url.defaultZone=http://jogayjoga-discovery:8761/eureka/
-    deploy:
-      mode: replicated
-      replicas: 1
-    networks:
-      - private-network
-    depends_on:
-      - discovery
       - account
+
+  
 
 networks:
   private-network:
