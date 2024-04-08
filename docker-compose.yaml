@@ -160,7 +160,6 @@ services:
       - auth
       - account
 
-
   group:
     build: 
       context: ../jogayjoga.group-resource/
@@ -185,7 +184,6 @@ services:
       - auth
       - account
 
-  
 
 networks:
   private-network:
